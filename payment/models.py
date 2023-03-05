@@ -5,7 +5,7 @@ class PaymentMethod(models.Model):
     name = models.CharField(max_length=50)
     short_description = models.CharField(max_length=50)
     description = models.TextField()
-    logo = models.ImageField()
+    logo = models.ImageField(upload_to="payment_method_logo")
     detail = models.CharField(max_length=50, blank=True)
     detail_name = models.CharField(max_length=100, blank=True)
     active = models.BooleanField(default=False)

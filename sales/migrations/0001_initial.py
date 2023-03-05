@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         ('inventory', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('payment', '0001_initial'),
-        ('gamesales', '__first__'),
+        ('customer', '__first__'),
     ]
 
     operations = [

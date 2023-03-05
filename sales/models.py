@@ -45,7 +45,7 @@ class Order(models.Model):
 
 class Cart(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='cart', null=True)
-    anonymous_customer = models.ForeignKey('gamesales.AnonymousCustomer', on_delete=models.CASCADE,
+    anonymous_customer = models.ForeignKey('customer.AnonymousCustomer', on_delete=models.CASCADE,
                                            related_name='cart', null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     is_ordered = models.BooleanField(default=False)

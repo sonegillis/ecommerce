@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from gamesales.models import Customer, AnonymousCustomer
+from customer.models import Customer, AnonymousCustomer
 
 
 @admin.register(Customer)
