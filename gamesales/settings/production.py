@@ -7,6 +7,8 @@ environ.Env.read_env(os.path.join(BASE_DIR / ".env"))
 
 STATIC_ROOT = "staticfiles"
 
+DEBUG = False
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
