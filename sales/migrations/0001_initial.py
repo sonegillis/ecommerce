@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('is_ordered', models.BooleanField(default=False)),
-                ('anonymous_customer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='cart', to='gamesales.anonymouscustomer')),
+                ('anonymous_customer', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='cart', to='customer.anonymouscustomer')),
                 ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='cart', to=settings.AUTH_USER_MODEL)),
             ],
         ),
