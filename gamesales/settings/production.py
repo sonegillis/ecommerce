@@ -19,3 +19,5 @@ DATABASES = {
         'PORT': env('DB_PORT'),
     }
 }
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

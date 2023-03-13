@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from inventory.currency import currencies
@@ -5,7 +6,8 @@ from inventory.currency import currencies
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to="category_images", null=True, blank=True)
+    thumbnail = models.ImageField(upload_to="category_thumbnails", null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     short_description = models.CharField(max_length=300, null=True, blank=True)
@@ -19,6 +21,17 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def image_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name)
+
+    def thumbnail_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.thumbnail.name)
+
+    image_tag.short_description = "Image Preview"
+    thumbnail_tag.short_description = "Thumbnail Preview"
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -26,35 +39,100 @@ class Product(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     in_stock = models.BooleanField(default=True)
-    image = models.ImageField(upload_to='product_images')
     rating = models.FloatField(default=5)
     visible = models.BooleanField(default=True, help_text="Appear in product listings")
     description = models.TextField(null=True)
-    thumbnail = models.ImageField(null=True)
-
-    def get_image(self):
-        from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name)
-
-    def get_thumbnail(self):
-        from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.thumbnail.name)
-
-    get_image.short_description = "Image Preview"
-    get_thumbnail.short_description = "Thumbnail Preview"
+    keywords = models.TextField(null=True, help_text="Keywords separated by comma")
 
     def __str__(self):
         return self.name
 
+    def image_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name)
 
-class ProductPrice(models.Model):
-    product = models.OneToOneField("Product", on_delete=models.CASCADE, related_name="product_price")
-    price = models.FloatField()
-    measurement_unit = models.ForeignKey("MeasurementUnit", on_delete=models.CASCADE, null=True, blank=True)
-    currency = models.ForeignKey('SupportedCurrency', on_delete=models.CASCADE)
+    def thumbnail_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="60" height="60"/>' % self.thumbnail.name)
+
+    image_tag.short_description = "Image Preview"
+    thumbnail_tag.short_description = "Thumbnail Preview"
+
+
+PRODUCT_FEATURE_TYPES = (
+    ("color", "Color"),
+    ("size", "Size"),
+)
+
+
+class ProductFeature(models.Model):
+    is_cleaned = False
+    type = models.CharField(max_length=100, choices=PRODUCT_FEATURE_TYPES)
+    name = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE, related_name="product_feature")
+    parent_feature = models.ForeignKey("ProductFeature", on_delete=models.CASCADE, null=True, blank=True)
+
+    class Meta:
+        unique_together = ('type', 'product')
+
+    def clean(self):
+        self.is_cleaned = True
+        if self.type == "color":
+            self.validate_color(self.value)
+        super(ProductFeature, self).clean()
+
+    @staticmethod
+    def validate_color(color: str):
+        if not color.startswith("#") and (len(color) == 7 or len(color) == 9):
+            raise ValidationError("Invalid color code")
+
+    def save(self, *args, **kwargs):
+        if not self.is_cleaned:
+            self.full_clean()
+        super(ProductFeature, self).save(*args, **kwargs)
 
     def __str__(self):
-        return str(self.price)
+        return f"{self.name} {self.product.name}"
+
+
+DISCOUNT_TYPES = (
+    ("flat", "Flat"),
+    ("percentage", "Percentage"),
+)
+
+
+class ProductVariation(models.Model):
+    feature = models.OneToOneField("ProductFeature", on_delete=models.CASCADE,
+                                   related_name="product_variation", null=True)
+    measurement_unit = models.ForeignKey("MeasurementUnit", on_delete=models.CASCADE, null=True, blank=True)
+    currency = models.ForeignKey('SupportedCurrency', on_delete=models.CASCADE)
+    price = models.FloatField()
+    discount = models.FloatField(null=True)
+    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, null=True)
+
+    def __str__(self):
+        return f"{self.feature.name} {self.feature.product.name} cost {self.price}"
+
+
+CLIENT_DEVICE_TYPES = (
+    ("mobile", "Mobile"),
+    ("tablet", "Tablet"),
+    ("desktop", "Desktop")
+)
+
+
+class ProductVariationDeviceImage(models.Model):
+    product_variation = models.ForeignKey("ProductVariation",
+                                          on_delete=models.CASCADE, related_name="production_variation_image")
+    device_type = models.CharField(max_length=20, choices=CLIENT_DEVICE_TYPES)
+
+
+class ProductVariationImage(models.Model):
+    product_variation_device_image = models.ForeignKey('ProductVariationDeviceImage',
+                                                       on_delete=models.CASCADE, null=True)
+    image = models.ImageField(upload_to="product_variation_images")
+    thumbnail = models.ImageField(upload_to="production_variation_thumbnails")
 
 
 class MeasurementUnit(models.Model):
