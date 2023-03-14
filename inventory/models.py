@@ -14,6 +14,7 @@ class Category(models.Model):
     description = models.TextField(null=True, blank=True)
     parent_category = models.ForeignKey('self', on_delete=models.CASCADE,
                                         null=True, blank=True, related_name='categories')
+    keywords = models.TextField(null=True, help_text="Keywords separated by comma")
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -43,6 +44,7 @@ class Product(models.Model):
     visible = models.BooleanField(default=True, help_text="Appear in product listings")
     description = models.TextField(null=True)
     keywords = models.TextField(null=True, help_text="Keywords separated by comma")
+    tag = models.ManyToManyField('Tag', related_name="product")
 
     def __str__(self):
         return self.name
@@ -152,3 +154,7 @@ class SupportedCurrency(models.Model):
 
     def __str__(self):
         return self.symbol
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=100)

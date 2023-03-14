@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.template.loader import get_template
 
 from inventory.models import Product, Category, SupportedCurrency, ProductVariation, ProductVariationDeviceImage, \
-     ProductFeature, ProductVariationImage
+    ProductFeature, ProductVariationImage, Tag
 
 
 class ProductVariationImageInline(admin.StackedInline):
@@ -11,23 +11,22 @@ class ProductVariationImageInline(admin.StackedInline):
 
 class ProductVariationInline(admin.StackedInline):
     model = ProductVariation
-    # fields = ("price_inline",)
-    # readonly_fields = ("price_inline",)
 
     def price_inline(self, obj=None, *args, **kwargs):
         context = {}
-        print("**********************a", self.modeladmin.response)
         admin_response = ProductFeatureAdmin(self.model, self.modeladmin.admin_site).add_view(self.request)
-        print("hello")
         inline = admin_response.context_data['inline_admin_formsets'][0]
-        # print(inline)
-        print("**********************00000")
         return get_template(inline.opts.template).render(context | {'inline_admin_formset': inline},
                                                          self.modeladmin.request)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
     pass
 
 
