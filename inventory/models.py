@@ -110,8 +110,8 @@ class ProductVariation(models.Model):
     measurement_unit = models.ForeignKey("MeasurementUnit", on_delete=models.CASCADE, null=True, blank=True)
     currency = models.ForeignKey('SupportedCurrency', on_delete=models.CASCADE)
     price = models.FloatField()
-    discount = models.FloatField(null=True)
-    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, null=True)
+    discount = models.FloatField(null=True, blank=True)
+    discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, null=True, blank=True)
 
     def __str__(self):
         return f"{self.feature.name or ''} {self.feature.product.name} cost {self.price}"
