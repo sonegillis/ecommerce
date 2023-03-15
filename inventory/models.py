@@ -95,7 +95,7 @@ class ProductFeature(models.Model):
         super(ProductFeature, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} {self.product.name}"
+        return f"{self.name or ''} {self.product.name}"
 
 
 DISCOUNT_TYPES = (
@@ -114,7 +114,7 @@ class ProductVariation(models.Model):
     discount_type = models.CharField(max_length=10, choices=DISCOUNT_TYPES, null=True)
 
     def __str__(self):
-        return f"{self.feature.name} {self.feature.product.name} cost {self.price}"
+        return f"{self.feature.name or ''} {self.feature.product.name} cost {self.price}"
 
 
 CLIENT_DEVICE_TYPES = (
