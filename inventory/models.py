@@ -69,7 +69,7 @@ PRODUCT_FEATURE_TYPES = (
 
 class ProductFeature(models.Model):
     is_cleaned = False
-    type = models.CharField(max_length=100, choices=PRODUCT_FEATURE_TYPES, null=True)
+    type = models.CharField(max_length=100, choices=PRODUCT_FEATURE_TYPES, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     value = models.CharField(max_length=100, null=True, blank=True)
     product = models.ForeignKey("Product", on_delete=models.CASCADE, related_name="product_feature")
