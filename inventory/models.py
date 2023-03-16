@@ -76,7 +76,7 @@ class ProductFeature(models.Model):
     parent_feature = models.ForeignKey("ProductFeature", on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
-        unique_together = ('type', 'product')
+        unique_together = ('type', 'value', 'product')
 
     def clean(self):
         self.is_cleaned = True
