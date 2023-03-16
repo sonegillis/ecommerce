@@ -129,12 +129,19 @@ class ProductVariationDeviceImage(models.Model):
                                           on_delete=models.CASCADE, related_name="production_variation_image")
     device_type = models.CharField(max_length=20, choices=CLIENT_DEVICE_TYPES)
 
+    def __str__(self):
+        return f"{self.product_variation.feature.type or ''} - {self.product_variation.feature.name or ''} | " \
+               f"{self.product_variation.feature.product.name} | {self.device_type}"
+
 
 class ProductVariationImage(models.Model):
     product_variation_device_image = models.ForeignKey('ProductVariationDeviceImage',
                                                        on_delete=models.CASCADE, null=True)
     image = models.ImageField(upload_to="product_variation_images")
     thumbnail = models.ImageField(upload_to="production_variation_thumbnails")
+
+    def __str__(self):
+        return str(self.product_variation_device_image)
 
 
 class MeasurementUnit(models.Model):
