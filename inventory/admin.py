@@ -47,7 +47,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(ProductFeature)
 class ProductFeatureAdmin(admin.ModelAdmin):
-    inlines = [ProductVariationInline]
+    inlines = [ProductVariationInline, ProductVariationImageInline]
 
     def get_inline_instances(self, request, obj=None):
         yield from ((inline, vars(inline).update(**{"modeladmin": self, "request": request}))[0] for inline in
