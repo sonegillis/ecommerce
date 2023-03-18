@@ -24,11 +24,12 @@ class Category(models.Model):
 
     def image_tag(self):
         from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name)
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name) if self.image else ''
 
     def thumbnail_tag(self):
         from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.thumbnail.name)
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.thumbnail.name)\
+            if self.thumbnail else ''
 
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
@@ -51,11 +52,12 @@ class Product(models.Model):
 
     def image_tag(self):
         from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name)
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name) if self.image else ''
 
     def thumbnail_tag(self):
         from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="60" height="60"/>' % self.thumbnail.name)
+        return mark_safe('<img src="/media/%s" width="60" height="60"/>' % self.thumbnail.name) \
+            if self.thumbnail else ''
 
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
@@ -124,19 +126,19 @@ CLIENT_DEVICE_TYPES = (
 )
 
 
-class ProductVariationDeviceImage(models.Model):
-    product_variation = models.ForeignKey("ProductVariation",
-                                          on_delete=models.CASCADE, related_name="production_variation_image")
-    device_type = models.CharField(max_length=20, choices=CLIENT_DEVICE_TYPES)
-
-    def __str__(self):
-        return f"{self.product_variation.feature.type or ''} - {self.product_variation.feature.name or ''} | " \
-               f"{self.product_variation.feature.product.name} | {self.device_type}"
+# class ProductVariationDeviceImage(models.Model):
+#     product_variation = models.ForeignKey("ProductVariation",
+#                                           on_delete=models.CASCADE, related_name="production_variation_image")
+#     device_type = models.CharField(max_length=20, choices=CLIENT_DEVICE_TYPES)
+#
+#     def __str__(self):
+#         return f"{self.product_variation.feature.type or ''} - {self.product_variation.feature.name or ''} | " \
+#                f"{self.product_variation.feature.product.name} | {self.device_type}"
 
 
 class ProductVariationImage(models.Model):
-    product_variation_device_image = models.ForeignKey('ProductVariationDeviceImage',
-                                                       on_delete=models.CASCADE, null=True)
+    product_variation = models.ForeignKey("ProductVariation",
+                                          on_delete=models.CASCADE, related_name="production_variation_image")
     image = models.ImageField(upload_to="product_variation_images")
     thumbnail = models.ImageField(upload_to="production_variation_thumbnails")
 

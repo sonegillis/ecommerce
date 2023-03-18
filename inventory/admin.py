@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.template.loader import get_template
 
-from inventory.models import Product, Category, SupportedCurrency, ProductVariation, ProductVariationDeviceImage, \
+from inventory.models import Product, Category, SupportedCurrency, ProductVariation, \
     ProductFeature, ProductVariationImage, Tag
 
 
@@ -12,12 +12,13 @@ class ProductVariationImageInline(admin.StackedInline):
 
     def image_tag(self, product_variation_image):
         from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % product_variation_image.image.name)
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % product_variation_image.image.name)\
+            if product_variation_image.image else ''
 
     def thumbnail_tag(self, product_variation_image):
         from django.utils.html import mark_safe
         return mark_safe('<img src="/media/%s" width="150" height="150"/>'
-                         % product_variation_image.thumbnail.name)
+                         % product_variation_image.thumbnail.name) if product_variation_image.thumbnail else ''
 
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
@@ -53,9 +54,9 @@ class ProductFeatureAdmin(admin.ModelAdmin):
                     super().get_inline_instances(request, obj))
 
 
-@admin.register(ProductVariationDeviceImage)
-class ProductVariationDeviceImageAdmin(admin.ModelAdmin):
-    inlines = [ProductVariationImageInline]
+# @admin.register(ProductVariationDeviceImage)
+# class ProductVariationDeviceImageAdmin(admin.ModelAdmin):
+#     inlines = [ProductVariationImageInline]
 
 
 @admin.register(SupportedCurrency)
