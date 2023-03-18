@@ -128,6 +128,18 @@ class ProductVariationImage(models.Model):
     def __str__(self):
         return str(self.product_variation)
 
+    def image_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.image.name) if self.image else ''
+
+    def thumbnail_tag(self):
+        from django.utils.html import mark_safe
+        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % self.thumbnail.name) \
+            if self.thumbnail else ''
+
+    image_tag.short_description = "Image Preview"
+    thumbnail_tag.short_description = "Thumbnail Preview"
+
 
 class MeasurementUnit(models.Model):
     short_name = models.CharField(max_length=10)
