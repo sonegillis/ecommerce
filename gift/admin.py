@@ -4,5 +4,6 @@ from .models import Offer
 # Register your models here.
 
 
+@admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
-    model = Offer
+    pass
