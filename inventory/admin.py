@@ -7,6 +7,7 @@ from inventory.models import Product, Category, SupportedCurrency, ProductVariat
 class ProductVariationImageInline(admin.StackedInline):
     model = ProductVariationImage
     fields = ('product_variation', 'image', 'thumbnail', 'image_tag', 'thumbnail_tag')
+    readonly_fields = ("image_tag", "thumbnail_tag")
 
     def image_tag(self, product_variation):
         from django.utils.html import mark_safe
