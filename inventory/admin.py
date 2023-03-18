@@ -5,23 +5,9 @@ from inventory.models import Product, Category, SupportedCurrency, ProductVariat
     ProductFeature, ProductVariationImage, Tag
 
 
+@admin.register(ProductVariationImage)
 class ProductVariationImageInline(admin.StackedInline):
-    model = ProductVariationImage
-    fields = ("image", "thumbnail", "image_tag", "thumbnail_tag")
-    readonly_fields = ("image_tag", "thumbnail_tag")
-
-    def image_tag(self, product_variation_image):
-        from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>' % product_variation_image.image.name)\
-            if product_variation_image.image else ''
-
-    def thumbnail_tag(self, product_variation_image):
-        from django.utils.html import mark_safe
-        return mark_safe('<img src="/media/%s" width="150" height="150"/>'
-                         % product_variation_image.thumbnail.name) if product_variation_image.thumbnail else ''
-
-    image_tag.short_description = "Image Preview"
-    thumbnail_tag.short_description = "Thumbnail Preview"
+    pass
 
 
 class ProductVariationInline(admin.StackedInline):
@@ -47,7 +33,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(ProductFeature)
 class ProductFeatureAdmin(admin.ModelAdmin):
-    inlines = [ProductVariationInline, ProductVariationImageInline]
+    inlines = [ProductVariationInline]
 
     def get_inline_instances(self, request, obj=None):
         yield from ((inline, vars(inline).update(**{"modeladmin": self, "request": request}))[0] for inline in
