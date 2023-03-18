@@ -12,17 +12,7 @@ class ProductVariationImageAdmin(admin.ModelAdmin):
 
 class ProductVariationImageInline(admin.StackedInline):
     model = ProductVariationImage
-
-
-@admin.register(ProductVariation)
-class ProductVariationAdmin(admin.ModelAdmin):
-    inlines = [ProductVariationImageInline]
-
-
-class ProductVariationInline(admin.StackedInline):
-    model = ProductVariation
-    fields = ('feature', 'measurement_unit', 'currency', 'price', 'discount',
-              'discount_type', 'image_tag', 'thumbnail_tag')
+    fields = ('product_variation', 'image', 'thumbnail', 'image_tag', 'thumbnail_tag')
 
     def image_tag(self, product_variation):
         from django.utils.html import mark_safe
@@ -38,6 +28,15 @@ class ProductVariationInline(admin.StackedInline):
 
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
+
+
+@admin.register(ProductVariation)
+class ProductVariationAdmin(admin.ModelAdmin):
+    inlines = [ProductVariationImageInline]
+
+
+class ProductVariationInline(admin.StackedInline):
+    model = ProductVariation
 
 
 @admin.register(Product)
