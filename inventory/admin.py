@@ -6,7 +6,7 @@ from inventory.models import Product, Category, SupportedCurrency, ProductVariat
 
 
 @admin.register(ProductVariationImage)
-class ProductVariationImageInline(admin.StackedInline):
+class ProductVariationImageInline(admin.ModelAdmin):
     pass
 
 
