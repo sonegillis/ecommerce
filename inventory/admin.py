@@ -6,25 +6,21 @@ from inventory.models import Product, Category, SupportedCurrency, ProductVariat
 
 
 @admin.register(ProductVariationImage)
-class ProductVariationImageInline(admin.ModelAdmin):
+class ProductVariationImageAdmin(admin.ModelAdmin):
     pass
+
+
+class ProductVariationImageInline(admin.StackedInline):
+    model = ProductVariationImage
 
 
 @admin.register(ProductVariation)
 class ProductVariation(admin.ModelAdmin):
-    # inlines = ProductVariationImageInline
-    pass
+    inlines = ProductVariationImageInline
 
 
 class ProductVariationInline(admin.StackedInline):
     model = ProductVariation
-
-    def price_inline(self, obj=None, *args, **kwargs):
-        context = {}
-        admin_response = ProductFeatureAdmin(self.model, self.modeladmin.admin_site).add_view(self.request)
-        inline = admin_response.context_data['inline_admin_formsets'][0]
-        return get_template(inline.opts.template).render(context | {'inline_admin_formset': inline},
-                                                         self.modeladmin.request)
 
 
 @admin.register(Product)
