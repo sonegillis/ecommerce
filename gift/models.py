@@ -8,7 +8,7 @@ class Offer(models.Model):
     value = models.FloatField(help_text="Percentage value off")
     image = models.ImageField(upload_to="offers")
     thumbnail = models.ImageField(upload_to="offers_thumbnail")
-    product = models.ForeignKey('inventory.Product', related_name='offers')
+    product = models.ForeignKey('inventory.Product', related_name='offers', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Up to {self.value}% OFF {self.category}"
