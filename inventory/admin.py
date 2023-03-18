@@ -12,7 +12,8 @@ class ProductVariationImageInline(admin.ModelAdmin):
 
 @admin.register(ProductVariation)
 class ProductVariation(admin.ModelAdmin):
-    inlines = ProductVariationImageInline
+    # inlines = ProductVariationImageInline
+    pass
 
 
 class ProductVariationInline(admin.StackedInline):
