@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'inventory',
     'sales',
     'payment',
-    'gift'
+    'gift',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

@@ -1,11 +1,13 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import slugify
 
 from inventory.currency import currencies
 
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
+    slug = models.SlugField(max_length=200)
     image = models.ImageField(upload_to="category_images", null=True, blank=True)
     thumbnail = models.ImageField(upload_to="category_thumbnails", null=True, blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -34,9 +36,14 @@ class Category(models.Model):
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
 
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+
 
 class Product(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=200)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name='products')
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -61,6 +68,10 @@ class Product(models.Model):
 
     image_tag.short_description = "Image Preview"
     thumbnail_tag.short_description = "Thumbnail Preview"
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Product, self).save(*args, **kwargs)
 
 
 PRODUCT_FEATURE_TYPES = (
