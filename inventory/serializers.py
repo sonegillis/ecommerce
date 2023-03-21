@@ -1,12 +1,30 @@
-from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
+from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from inventory.models import Category, Product, ProductFeature, ProductVariation
 
 
 class CategorySerializer(ModelSerializer):
+    product_count = serializers.SerializerMethodField()
+    child_categories = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
         fields = "__all__"
+
+    @staticmethod
+    def _recurse_count_products_in_category(category, product_count=0):
+        if category.categories and category.categories.all().count():
+            for _category in category.categories.all():
+                product_count += CategorySerializer._recurse_count_products_in_category(_category, product_count)
+        product_count += category.products.all().count() if category.products else 0
+        return product_count
+
+    def get_product_count(self, category):
+        return CategorySerializer._recurse_count_products_in_category(category, 0)
+
+    def get_child_categories(self, category):
+        return CategorySerializer(category.categories.all(), many=True).data
 
 
 class ProductVariationSerializer(ModelSerializer):
